@@ -1,282 +1,356 @@
- <!DOCTYPE html>
- <html lang="pt-br">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Catálogo de Produtos - Vytalle</title>
-     <script src="https://cdn.tailwindcss.com"></script>
-     <style>
-         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-         body {
-             font-family: 'Inter', sans-serif;
-             background-color: #fef3c7; /* Light yellowish background, close to light gold */
-         }
-         .table-container {
-             overflow-x: auto;
-         }
-         /* Custom golden color */
-         .gold-vytalle {
-             color: #a87800;
-         }
-         .bg-gold-vytalle {
-             background-color: #a87800;
-         }
-         .bg-orange-vytalle {
-             background-color: #ed8936;
-         }
-         .text-orange-vytalle {
-             color: #ed8936;
-         }
-         .border-orange-vytalle {
-             border-color: #ed8936;
-         }
-         .focus-border-orange-vytalle:focus {
-             border-color: #ed8936;
-         }
-     </style>
- </head>
- <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
-     <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 lg:p-10 w-full max-w-6xl">
-         <div class="mb-6 flex flex-col sm:flex-row justify-between items-center">
-             <h1 class="text-2xl sm:text-3xl font-bold text-orange-vytalle mb-4 sm:mb-0">Catálogo Vytalle</h1>
-             <div class="relative w-full sm:w-80">
-                 <input type="text" id="search-input" placeholder="Pesquisar produto..." class="w-full pl-10 pr-4 py-2 border-2 border-orange-vytalle rounded-full focus:outline-none focus-border-orange-vytalle transition-all duration-300 shadow-sm">
-                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-vytalle" viewBox="0 0 20 20" fill="currentColor">
-                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                     </svg>
-                 </span>
-             </div>
-         </div>
- 
-         <div class="table-container">
-             <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
-                 <thead class="bg-orange-vytalle text-white">
-                     <tr>
-                         <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider hidden sm:table-cell">
-                             </th>
-                         <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider">
-                             Produto
-                         </th>
-                         <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider">
-                             PIX
-                         </th>
-                         <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider">
-                             Crédito 4X
-                         </th>
-                     </tr>
-                 </thead>
-                 <tbody id="products-table-body" class="bg-white divide-y divide-gray-200">
-                     </tbody>
-             </table>
-         </div>
- 
-         <div id="no-results" class="text-center py-6 text-gray-500 text-lg hidden">
-             Nenhum produto encontrado.
-         </div>
-     </div>
- 
-     <script>
-         // Data structure for the products, including an icon based on category
-         const products = [
-             // TOXINA BOTULINICA
-             { category: "Toxina Botulínica", name: "BOTOX 100UI", pixPrice: "R$ 745", creditPrice: "R$ 789" },
-             { category: "Toxina Botulínica", name: "BOTOX 200UI", pixPrice: "R$ 1.365", creditPrice: "R$ 1.399" },
-             { category: "Toxina Botulínica", name: "BOTOX 50UI", pixPrice: "R$ 489", creditPrice: "R$ 525" },
-             { category: "Toxina Botulínica", name: "BOTULIFT 100UI", pixPrice: "R$ 775", creditPrice: "R$ 791" },
-             { category: "Toxina Botulínica", name: "BOTULIFT 150UI", pixPrice: "R$ 940", creditPrice: "R$ 973" },
-             { category: "Toxina Botulínica", name: "BOTULIFT 200UI", pixPrice: "R$ 1.245", creditPrice: "R$ 1.273" },
-             { category: "Toxina Botulínica", name: "BOTULIM 100UI", pixPrice: "R$ 649", creditPrice: "R$ 689" },
-             { category: "Toxina Botulínica", name: "BOTULIM 200UI", pixPrice: "R$ 1.065", creditPrice: "R$ 1.099" },
-             { category: "Toxina Botulínica", name: "BOTULIM 50UI", pixPrice: "R$ 499", creditPrice: "R$ 525" },
-             { category: "Toxina Botulínica", name: "DYSPORT 300UI", pixPrice: "R$ 990", creditPrice: "R$ 1.090" },
-             { category: "Toxina Botulínica", name: "DYSPORT 500UI", pixPrice: "R$ 1.359", creditPrice: "R$ 1.459" },
-             { category: "Toxina Botulínica", name: "NABOTA 100UI", pixPrice: "R$ 620", creditPrice: "R$ 649" },
-             { category: "Toxina Botulínica", name: "XEOMIN 100UI", pixPrice: "R$ 620", creditPrice: "R$ 649" },
- 
-             // BIOESTIMULADORES
-             { category: "Bioestimuladores", name: "ELLANSE M", pixPrice: "R$ 1.149", creditPrice: "R$ 1.199" },
-             { category: "Bioestimuladores", name: "ELLANSE S", pixPrice: "R$ 965", creditPrice: "R$ 999" },
-             { category: "Bioestimuladores", name: "HIALUROX BIO 1ML", pixPrice: "R$ 350", creditPrice: "R$ 399" },
-             { category: "Bioestimuladores", name: "NUTRIEX CIENTIFIC", pixPrice: "R$ 310", creditPrice: "R$ 335" },
-             { category: "Bioestimuladores", name: "RADIESSE DUO 1.5CC", pixPrice: "R$ 770", creditPrice: "R$ 799" },
-             { category: "Bioestimuladores", name: "RADIESSE DUO 3.0 CC", pixPrice: "R$ 1.320", creditPrice: "R$ 1.362" },
-             { category: "Bioestimuladores", name: "RADIESSE PLUS LIDO", pixPrice: "R$ 770", creditPrice: "R$ 799" },
-             { category: "Bioestimuladores", name: "RENNOVA DIAMOND INTENSE", pixPrice: "R$ 499", creditPrice: "R$ 525" },
-             { category: "Bioestimuladores", name: "RENNOVA ELLEVA 150MG", pixPrice: "R$ 569", creditPrice: "R$ 599" },
-             { category: "Bioestimuladores", name: "RENNOVA ELLEVA 210MG", pixPrice: "R$ 799", creditPrice: "R$ 835" },
-             { category: "Bioestimuladores", name: "RENNOVA ELLEVA X 630MG", pixPrice: "R$ 2.270", creditPrice: "R$ 2.349" },
-             { category: "Bioestimuladores", name: "SCULPTRA 2 FRASCOS", pixPrice: "R$ 2.149", creditPrice: "R$ 2.289" },
- 
-             // BIOREMODELADORES
-             { category: "Bioremodeladores", name: "BIO EXO PLUS (EXOSSOMOS PDRN HIALURONICO) 7ML", pixPrice: "R$ 330", creditPrice: "R$ 359" },
-             { category: "Bioremodeladores", name: "EVO PDRN TRIPLE 1 VIAL 3ML", pixPrice: "R$ 229", creditPrice: "R$ 245" },
-             { category: "Bioremodeladores", name: "PROPHILO 2ML", pixPrice: "R$ 889", creditPrice: "R$ 916" },
-             { category: "Bioremodeladores", name: "REJUVITAL PDRN 5 VIALS 3ML", pixPrice: "R$ 749", creditPrice: "R$ 799" },
-             
-             // SKINBOOSTERS
-             { category: "Skinboosters", name: "HIALUROX SKIN PLUS 3 VIALS 4ML", pixPrice: "R$ 299", creditPrice: "R$ 339" },
-             { category: "Skinboosters", name: "SAYPHA RICH", pixPrice: "R$ 199", creditPrice: "R$ 210" },
- 
-             // PREENCHEDORES
-             { category: "Preenchedores", name: "BELOTERO BALANCE LIDO", pixPrice: "R$ 255", creditPrice: "R$ 265" },
-             { category: "Preenchedores", name: "BELOTERO INTENSE LIDO", pixPrice: "R$ 265", creditPrice: "R$ 275" },
-             { category: "Preenchedores", name: "BELOTERO VOLUME LIDO", pixPrice: "R$ 525", creditPrice: "R$ 535" },
-             { category: "Preenchedores", name: "BIO LIFT 24MG", pixPrice: "R$ 159", creditPrice: "R$ 179" },
-             { category: "Preenchedores", name: "BIOGELIS FINE LINES 2M", pixPrice: "R$ 460", creditPrice: "R$ 490" },
-             { category: "Preenchedores", name: "BIOGELIS GLOBAL 2ML", pixPrice: "R$ 499", creditPrice: "R$ 525" },
-             { category: "Preenchedores", name: "BIOGELIS VOLUME 2ML", pixPrice: "R$ 499", creditPrice: "R$ 525" },
-             { category: "Preenchedores", name: "BIOGELIS VOLUMAX 2ML", pixPrice: "R$ 699", creditPrice: "R$ 729" },
-             { category: "Preenchedores", name: "BIOGELIS GLOBAL 2X 1,25ML", pixPrice: "R$ 550", creditPrice: "R$ 569" },
-             { category: "Preenchedores", name: "BIOGELIS VOLUME 2X 1,25ML", pixPrice: "R$ 550", creditPrice: "R$ 569" },
-             { category: "Preenchedores", name: "EPTQ S300", pixPrice: "R$ 285", creditPrice: "R$ 299" },
-             { category: "Preenchedores", name: "EPTQ S500", pixPrice: "R$ 285", creditPrice: "R$ 299" },
-             { category: "Preenchedores", name: "EVO DERM 1ML", pixPrice: "R$ 227", creditPrice: "R$ 238" },
-             { category: "Preenchedores", name: "EVO ULTRA DEEP 1ML", pixPrice: "R$ 227", creditPrice: "R$ 238" },
-             { category: "Preenchedores", name: "NEURAMIS DEEP", pixPrice: "R$ 199", creditPrice: "R$ 210" },
-             { category: "Preenchedores", name: "NEURAMIS LIDOCAINE VOLUME", pixPrice: "R$ 199", creditPrice: "R$ 210" },
-             { category: "Preenchedores", name: "NEURAMIS LIDOCAINE", pixPrice: "R$ 199", creditPrice: "R$ 210" },
-             { category: "Preenchedores", name: "PERFECTHA SUBSKIN", pixPrice: "R$ 730", creditPrice: "R$ 749" },
-             { category: "Preenchedores", name: "RENNOVA HYALURONIC 30 3ML (RBS)", pixPrice: "R$ 345", creditPrice: "R$ 369" },
-             { category: "Preenchedores", name: "RENNOVA DEEP LINE LIDO", pixPrice: "R$ 275", creditPrice: "R$ 295" },
-             { category: "Preenchedores", name: "RENNOVA FILL", pixPrice: "R$ 199", creditPrice: "R$ 210" },
-             { category: "Preenchedores", name: "RENNOVA FILL LIDO", pixPrice: "R$ 217", creditPrice: "R$ 227" },
-             { category: "Preenchedores", name: "RENNOVA LIFT", pixPrice: "R$ 225", creditPrice: "R$ 237" },
-             { category: "Preenchedores", name: "RENNOVA LIFT LIDO", pixPrice: "R$ 247", creditPrice: "R$ 257" },
-             { category: "Preenchedores", name: "RENNOVA LIFT PLUS LIDO", pixPrice: "R$ 285", creditPrice: "R$ 299" },
-             { category: "Preenchedores", name: "RENNOVA LIFT SHAPE 2ML", pixPrice: "R$ 349", creditPrice: "R$ 375" },
-             { category: "Preenchedores", name: "RENNOVA ULTRA VOLUME LIDO 1ML", pixPrice: "R$ 285", creditPrice: "R$ 299" },
-             { category: "Preenchedores", name: "RENNOVA ULTRA VOLUME LIDO 2ML", pixPrice: "R$ 460", creditPrice: "R$ 490" },
-             { category: "Preenchedores", name: "RESTYLANE DEFYNE 1ML", pixPrice: "R$ 420", creditPrice: "R$ 449" },
-             { category: "Preenchedores", name: "RESTYLANE GEL", pixPrice: "R$ 285", creditPrice: "R$ 299" },
-             { category: "Preenchedores", name: "RESTYLANE LYFT LIDO", pixPrice: "R$ 399", creditPrice: "R$ 419" },
-             { category: "Preenchedores", name: "RESTYLANE LYFT SEM LIDO", pixPrice: "R$ 389", creditPrice: "R$ 409" },
-             { category: "Preenchedores", name: "RESTYLANE REFYNE 1ML", pixPrice: "R$ 299", creditPrice: "R$ 339" },
-             { category: "Preenchedores", name: "RESTYLANE VOLYME 1ML", pixPrice: "R$ 400", creditPrice: "R$ 439" },
-             { category: "Preenchedores", name: "SAYPHA FILLER LIDO", pixPrice: "R$ 220", creditPrice: "R$ 231" },
-             { category: "Preenchedores", name: "SAYPHA FILLER SEM LIDO", pixPrice: "R$ 225", creditPrice: "R$ 237" },
-             { category: "Preenchedores", name: "SAYPHA VOLUME PLUS LIDO", pixPrice: "R$ 264", creditPrice: "R$ 274" },
-             { category: "Preenchedores", name: "SINGDERM 10ML", pixPrice: "R$ 1.100", creditPrice: "R$ 1.190" },
-             { category: "Preenchedores", name: "SINGDERM 2ML", pixPrice: "R$ 350", creditPrice: "R$ 399" },
-             { category: "Preenchedores", name: "SOFIDERM SUB SKIN 10ML", pixPrice: "R$ 1.790", creditPrice: "R$ 1.880" },
-             { category: "Preenchedores", name: "YVOIRE CLASSIC PLUS", pixPrice: "R$ 299", creditPrice: "R$ 339" },
-             { category: "Preenchedores", name: "YVOIRE CONTOUR", pixPrice: "R$ 325", creditPrice: "R$ 335" },
-             { category: "Preenchedores", name: "YVOIRE VOLUME PLUS", pixPrice: "R$ 309", creditPrice: "R$ 329" },
-             
-             // FIOS BIO ESTIMULAÇÃO
-             { category: "Fios Bio Estimulação", name: "APRIL BRIDE 18GX100MMX160MM ESPICULADO PACK 4 FIOS", pixPrice: "R$ 396", creditPrice: "R$ 380" },
-             { category: "Fios Bio Estimulação", name: "APRIL BRIDE 19GX100MMX160MM ESPICULADO PACK 4 FIOS", pixPrice: "R$ 396", creditPrice: "R$ 380" },
-             { category: "Fios Bio Estimulação", name: "APRIL BRIDE 29GX40MMX50MM PACK 10 UN", pixPrice: "R$ 180", creditPrice: "R$ 165" },
-             { category: "Fios Bio Estimulação", name: "APRIL BRIDE FILLER 21GX38MMX50MM PACK 4 FIOS", pixPrice: "R$ 375", creditPrice: "R$ 360" },
-             { category: "Fios Bio Estimulação", name: "APRIL BRIDE FILLER 21GX60MMX80MM PACK 4 FIOX", pixPrice: "R$ 375", creditPrice: "R$ 360" },
-             { category: "Fios Bio Estimulação", name: "BIOFILS LISO AGULHADO 30GX25MMX30MM PACK 10 UN", pixPrice: "R$ 260", creditPrice: "R$ 240" },
-             { category: "Fios Bio Estimulação", name: "BIOFILS 19GX100MMX170MM ESPICULADO PACK 4UN", pixPrice: "R$ 375", creditPrice: "R$ 360" },
-             { category: "Fios Bio Estimulação", name: "BIOFILS 23GX38MMX50MM FILLER PACK 4UN", pixPrice: "R$ 375", creditPrice: "R$ 360" },
-             { category: "Fios Bio Estimulação", name: "ITHREAD 21GX38MMX50MM FILLER PACK 20UN", pixPrice: "R$ 1.969", creditPrice: "R$ 1.838" },
-             { category: "Fios Bio Estimulação", name: "ITHREAD 21GX60MMX90MM FILLER PACK 20UN", pixPrice: "R$ 1.969", creditPrice: "R$ 1.838" },
-             { category: "Fios Bio Estimulação", name: "ITHREAD 29GX38MM AGULHADO PACK 20UN", pixPrice: "R$ 499", creditPrice: "R$ 525" },
-             { category: "Fios Bio Estimulação", name: "ITHREAD 30GX25MM AGULHADO PACK 20UN", pixPrice: "R$ 499", creditPrice: "R$ 525" },
-             { category: "Fios Bio Estimulação", name: "ITHREAD ESPICULADO 19GX100X160MM PACK 20UN", pixPrice: "R$ 1.899", creditPrice: "R$ 1.820" },
- 
-             // MICRO CÂNULAS
-             { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (22GX50MM)", pixPrice: "R$ 15", creditPrice: "R$ 17" },
-             { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (25GX50MM)", pixPrice: "R$ 15", creditPrice: "R$ 17" },
-             { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (22GX70MM)", pixPrice: "R$ 15", creditPrice: "R$ 17" },
-             { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (18GX100MM)", pixPrice: "R$ 18", creditPrice: "R$ 20" },
-             { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (18GX70MM)", pixPrice: "R$ 18", creditPrice: "R$ 20" },
- 
-             // ENZIMAS
-             { category: "Enzimas", name: "HILAURONIDASE 3 VIALS 2.000 UTR", pixPrice: "R$ 170", creditPrice: "R$ 180" }
-         ];
- 
-         // Function to get the correct icon/emoji for each category
-         function getCategoryIcon(category) {
-             switch (category) {
-                 case "Toxina Botulínica":
-                 case "Preenchedores":
-                     return '💉'; // Syringe icon
-                 case "Bioestimuladores":
-                     return '💎'; // Diamond icon
-                 case "Bioremodeladores":
-                     return '💧'; // Droplet icon
-                 case "Skinboosters":
-                     return '✨'; // Sparkles icon
-                 case "Fios Bio Estimulação":
-                     return '🧵'; // Thread icon
-                 case "Micro Cânulas":
-                     return '🔬'; // Microscope icon
-                 case "Enzimas":
-                     return '🧪'; // Test tube icon
-                 default:
-                     return ''; // No icon
-             }
-         }
- 
-         // DOM elements
-         const tableBody = document.getElementById('products-table-body');
-         const searchInput = document.getElementById('search-input');
-         const noResultsMessage = document.getElementById('no-results');
- 
-         // Function to render the table rows based on the product data
-         function renderTable(productsToRender) {
-             tableBody.innerHTML = ''; // Clear existing table content
-             if (productsToRender.length === 0) {
-                 noResultsMessage.classList.remove('hidden');
-                 return;
-             }
-             noResultsMessage.classList.add('hidden');
-             
-             let lastCategory = null;
-             productsToRender.forEach(product => {
-                 // Add a category header if the category changes
-                 if (product.category !== lastCategory) {
-                     const categoryRow = document.createElement('tr');
-                     categoryRow.innerHTML = `
-                         <td colspan="4" class="px-3 py-2 bg-orange-100 text-orange-600 font-bold text-sm uppercase">
-                             ${product.category}
-                         </td>
-                     `;
-                     tableBody.appendChild(categoryRow);
-                     lastCategory = product.category;
-                 }
- 
-                 // Create the product row
-                 const row = document.createElement('tr');
-                 row.classList.add('bg-white', 'hover:bg-gray-50', 'transition-colors', 'sm:hover:bg-orange-50');
-                 row.innerHTML = `
-                     <td class="px-3 py-2 text-sm text-gray-900 hidden sm:table-cell">
-                         <span class="text-xl sm:text-2xl text-orange-vytalle">${getCategoryIcon(product.category)}</span>
-                     </td>
-                     <td class="px-3 py-2 text-sm text-gray-900 font-medium">
-                         ${product.name}
-                     </td>
-                     <td class="px-3 py-2 text-sm text-gray-700 whitespace-nowrap font-bold gold-vytalle">
-                         ${product.pixPrice}
-                     </td>
-                     <td class="px-3 py-2 text-sm text-gray-700 whitespace-nowrap font-bold gold-vytalle">
-                         ${product.creditPrice}
-                     </td>
-                 `;
-                 tableBody.appendChild(row);
-             });
-         }
- 
-         // Filter the table based on the search input
-         function filterTable() {
-             const searchTerm = searchInput.value.toLowerCase();
-             const filteredProducts = products.filter(product => 
-                 product.name.toLowerCase().includes(searchTerm) ||
-                 product.category.toLowerCase().includes(searchTerm)
-             );
-             renderTable(filteredProducts);
-         }
- 
-         // Event listener for the search input
-         searchInput.addEventListener('input', filterTable);
- 
-         // Initial rendering of the table
-         renderTable(products);
-     </script>
- </body>
- </html>
- 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Produtos - Vytalle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fef3c7;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .gold-vytalle {
+            color: #a87800;
+        }
+        .bg-orange-vytalle {
+            background-color: #ed8936;
+        }
+        .text-orange-vytalle {
+            color: #ed8936;
+        }
+        .border-orange-vytalle {
+            border-color: #ed8936;
+        }
+        .focus-border-orange-vytalle:focus {
+            border-color: #ed8936;
+        }
+        /* Mobile cards view and category headers */
+        @media (max-width: 639px) {
+            table {
+                display: none;
+            }
+            .category-section {
+                display: block;
+            }
+        }
+        /* Desktop table view */
+        @media (min-width: 640px) {
+            .category-section {
+                display: none;
+            }
+            table {
+                display: table;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 lg:p-10 w-full max-w-6xl">
+        <div class="mb-6 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-2xl sm:text-3xl font-bold text-orange-vytalle mb-4 sm:mb-0">Catálogo Vytalle</h1>
+            <div class="relative w-full sm:w-80">
+                <input type="text" id="search-input" placeholder="Pesquisar produto..." class="w-full pl-10 pr-4 py-2 border-2 border-orange-vytalle rounded-full focus:outline-none focus-border-orange-vytalle transition-all duration-300 shadow-sm">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-vytalle" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="table-container hidden sm:block">
+            <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">
+                <thead class="bg-orange-vytalle text-white">
+                    <tr>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider"></th>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider">
+                            Produto
+                        </th>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider">
+                            PIX
+                        </th>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider">
+                            Crédito em até 4x (sem juros)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="products-table-body" class="bg-white divide-y divide-gray-200">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div id="products-card-container" class="sm:hidden space-y-6">
+            <!-- Cards will be inserted here by JavaScript -->
+        </div>
+
+        <div id="no-results" class="text-center py-6 text-gray-500 text-lg hidden">
+            Nenhum produto encontrado.
+        </div>
+    </div>
+
+    <script>
+        // Data structure for the products
+        const products = [
+            // TOXINA BOTULINICA
+            { category: "Toxina Botulínica", name: "BOTOX 100UI", pixPrice: "R$ 745", creditPrice: "R$ 789" },
+            { category: "Toxina Botulínica", name: "BOTOX 200UI", pixPrice: "R$ 1.365", creditPrice: "R$ 1.399" },
+            { category: "Toxina Botulínica", name: "BOTOX 50UI", pixPrice: "R$ 489", creditPrice: "R$ 525" },
+            { category: "Toxina Botulínica", name: "BOTULIFT 100UI", pixPrice: "R$ 775", creditPrice: "R$ 791" },
+            { category: "Toxina Botulínica", name: "BOTULIFT 150UI", pixPrice: "R$ 940", creditPrice: "R$ 973" },
+            { category: "Toxina Botulínica", name: "BOTULIFT 200UI", pixPrice: "R$ 1.245", creditPrice: "R$ 1.273" },
+            { category: "Toxina Botulínica", name: "BOTULIM 100UI", pixPrice: "R$ 649", creditPrice: "R$ 689" },
+            { category: "Toxina Botulínica", name: "BOTULIM 200UI", pixPrice: "R$ 1.065", creditPrice: "R$ 1.099" },
+            { category: "Toxina Botulínica", name: "BOTULIM 50UI", pixPrice: "R$ 499", creditPrice: "R$ 525" },
+            { category: "Toxina Botulínica", name: "DYSPORT 300UI", pixPrice: "R$ 990", creditPrice: "R$ 1.090" },
+            { category: "Toxina Botulínica", name: "DYSPORT 500UI", pixPrice: "R$ 1.359", creditPrice: "R$ 1.459" },
+            { category: "Toxina Botulínica", name: "NABOTA 100UI", pixPrice: "R$ 620", creditPrice: "R$ 649" },
+            { category: "Toxina Botulínica", name: "XEOMIN 100UI", pixPrice: "R$ 620", creditPrice: "R$ 649" },
+
+            // BIOESTIMULADORES
+            { category: "Bioestimuladores", name: "ELLANSE M", pixPrice: "R$ 1.149", creditPrice: "R$ 1.199" },
+            { category: "Bioestimuladores", name: "ELLANSE S", pixPrice: "R$ 965", creditPrice: "R$ 999" },
+            { category: "Bioestimuladores", name: "HIALUROX BIO 1ML", pixPrice: "R$ 350", creditPrice: "R$ 399" },
+            { category: "Bioestimuladores", name: "NUTRIEX CIENTIFIC", pixPrice: "R$ 310", creditPrice: "R$ 335" },
+            { category: "Bioestimuladores", name: "RADIESSE DUO 1.5CC", pixPrice: "R$ 770", creditPrice: "R$ 799" },
+            { category: "Bioestimuladores", name: "RADIESSE DUO 3.0 CC", pixPrice: "R$ 1.320", creditPrice: "R$ 1.362" },
+            { category: "Bioestimuladores", name: "RADIESSE PLUS LIDO", pixPrice: "R$ 770", creditPrice: "R$ 799" },
+            { category: "Bioestimuladores", name: "RENNOVA DIAMOND INTENSE", pixPrice: "R$ 499", creditPrice: "R$ 525" },
+            { category: "Bioestimuladores", name: "RENNOVA ELLEVA 150MG", pixPrice: "R$ 569", creditPrice: "R$ 599" },
+            { category: "Bioestimuladores", name: "RENNOVA ELLEVA 210MG", pixPrice: "R$ 799", creditPrice: "R$ 835" },
+            { category: "Bioestimuladores", name: "RENNOVA ELLEVA X 630MG", pixPrice: "R$ 2.270", creditPrice: "R$ 2.349" },
+            { category: "Bioestimuladores", name: "SCULPTRA 2 FRASCOS", pixPrice: "R$ 2.149", creditPrice: "R$ 2.289" },
+
+            // BIOREMODELADORES
+            { category: "Bioremodeladores", name: "BIO EXO PLUS (EXOSSOMOS PDRN HIALURONICO) 7ML", pixPrice: "R$ 330", creditPrice: "R$ 359" },
+            { category: "Bioremodeladores", name: "EVO PDRN TRIPLE 1 VIAL 3ML", pixPrice: "R$ 229", creditPrice: "R$ 245" },
+            { category: "Bioremodeladores", name: "PROPHILO 2ML", pixPrice: "R$ 889", creditPrice: "R$ 916" },
+            { category: "Bioremodeladores", name: "REJUVITAL PDRN 5 VIALS 3ML", pixPrice: "R$ 749", creditPrice: "R$ 799" },
+            
+            // SKINBOOSTERS
+            { category: "Skinboosters", name: "HIALUROX SKIN PLUS 3 VIALS 4ML", pixPrice: "R$ 299", creditPrice: "R$ 339" },
+            { category: "Skinboosters", name: "SAYPHA RICH", pixPrice: "R$ 199", creditPrice: "R$ 210" },
+
+            // PREENCHEDORES
+            { category: "Preenchedores", name: "BELOTERO BALANCE LIDO", pixPrice: "R$ 255", creditPrice: "R$ 265" },
+            { category: "Preenchedores", name: "BELOTERO INTENSE LIDO", pixPrice: "R$ 265", creditPrice: "R$ 275" },
+            { category: "Preenchedores", name: "BELOTERO VOLUME LIDO", pixPrice: "R$ 525", creditPrice: "R$ 535" },
+            { category: "Preenchedores", name: "BIO LIFT 24MG", pixPrice: "R$ 159", creditPrice: "R$ 179" },
+            { category: "Preenchedores", name: "BIOGELIS FINE LINES 2M", pixPrice: "R$ 460", creditPrice: "R$ 490" },
+            { category: "Preenchedores", name: "BIOGELIS GLOBAL 2ML", pixPrice: "R$ 499", creditPrice: "R$ 525" },
+            { category: "Preenchedores", name: "BIOGELIS VOLUME 2ML", pixPrice: "R$ 499", creditPrice: "R$ 525" },
+            { category: "Preenchedores", name: "BIOGELIS VOLUMAX 2ML", pixPrice: "R$ 699", creditPrice: "R$ 729" },
+            { category: "Preenchedores", name: "BIOGELIS GLOBAL 2X 1,25ML", pixPrice: "R$ 550", creditPrice: "R$ 569" },
+            { category: "Preenchedores", name: "BIOGELIS VOLUME 2X 1,25ML", pixPrice: "R$ 550", creditPrice: "R$ 569" },
+            { category: "Preenchedores", name: "EPTQ S300", pixPrice: "R$ 285", creditPrice: "R$ 299" },
+            { category: "Preenchedores", name: "EPTQ S500", pixPrice: "R$ 285", creditPrice: "R$ 299" },
+            { category: "Preenchedores", name: "EVO DERM 1ML", pixPrice: "R$ 227", creditPrice: "R$ 238" },
+            { category: "Preenchedores", name: "EVO ULTRA DEEP 1ML", pixPrice: "R$ 227", creditPrice: "R$ 238" },
+            { category: "Preenchedores", name: "NEURAMIS DEEP", pixPrice: "R$ 199", creditPrice: "R$ 210" },
+            { category: "Preenchedores", name: "NEURAMIS LIDOCAINE VOLUME", pixPrice: "R$ 199", creditPrice: "R$ 210" },
+            { category: "Preenchedores", name: "NEURAMIS LIDOCAINE", pixPrice: "R$ 199", creditPrice: "R$ 210" },
+            { category: "Preenchedores", name: "PERFECTHA SUBSKIN", pixPrice: "R$ 730", creditPrice: "R$ 749" },
+            { category: "Preenchedores", name: "RENNOVA HYALURONIC 30 3ML (RBS)", pixPrice: "R$ 345", creditPrice: "R$ 369" },
+            { category: "Preenchedores", name: "RENNOVA DEEP LINE LIDO", pixPrice: "R$ 275", creditPrice: "R$ 295" },
+            { category: "Preenchedores", name: "RENNOVA FILL", pixPrice: "R$ 199", creditPrice: "R$ 210" },
+            { category: "Preenchedores", name: "RENNOVA FILL LIDO", pixPrice: "R$ 217", creditPrice: "R$ 227" },
+            { category: "Preenchedores", name: "RENNOVA LIFT", pixPrice: "R$ 225", creditPrice: "R$ 237" },
+            { category: "Preenchedores", name: "RENNOVA LIFT LIDO", pixPrice: "R$ 247", creditPrice: "R$ 257" },
+            { category: "Preenchedores", name: "RENNOVA LIFT PLUS LIDO", pixPrice: "R$ 285", creditPrice: "R$ 299" },
+            { category: "Preenchedores", name: "RENNOVA LIFT SHAPE 2ML", pixPrice: "R$ 349", creditPrice: "R$ 375" },
+            { category: "Preenchedores", name: "RENNOVA ULTRA VOLUME LIDO 1ML", pixPrice: "R$ 285", creditPrice: "R$ 299" },
+            { category: "Preenchedores", name: "RENNOVA ULTRA VOLUME LIDO 2ML", pixPrice: "R$ 460", creditPrice: "R$ 490" },
+            { category: "Preenchedores", name: "RESTYLANE DEFYNE 1ML", pixPrice: "R$ 420", creditPrice: "R$ 449" },
+            { category: "Preenchedores", name: "RESTYLANE GEL", pixPrice: "R$ 285", creditPrice: "R$ 299" },
+            { category: "Preenchedores", name: "RESTYLANE LYFT LIDO", pixPrice: "R$ 399", creditPrice: "R$ 419" },
+            { category: "Preenchedores", name: "RESTYLANE LYFT SEM LIDO", pixPrice: "R$ 389", creditPrice: "R$ 409" },
+            { category: "Preenchedores", name: "RESTYLANE REFYNE 1ML", pixPrice: "R$ 299", creditPrice: "R$ 339" },
+            { category: "Preenchedores", name: "RESTYLANE VOLYME 1ML", pixPrice: "R$ 400", creditPrice: "R$ 439" },
+            { category: "Preenchedores", name: "SAYPHA FILLER LIDO", pixPrice: "R$ 220", creditPrice: "R$ 231" },
+            { category: "Preenchedores", name: "SAYPHA FILLER SEM LIDO", pixPrice: "R$ 225", creditPrice: "R$ 237" },
+            { category: "Preenchedores", name: "SAYPHA VOLUME PLUS LIDO", pixPrice: "R$ 264", creditPrice: "R$ 274" },
+            { category: "Preenchedores", name: "SINGDERM 10ML", pixPrice: "R$ 1.100", creditPrice: "R$ 1.190" },
+            { category: "Preenchedores", name: "SINGDERM 2ML", pixPrice: "R$ 350", creditPrice: "R$ 399" },
+            { category: "Preenchedores", name: "SOFIDERM SUB SKIN 10ML", pixPrice: "R$ 1.790", creditPrice: "R$ 1.880" },
+            { category: "Preenchedores", name: "YVOIRE CLASSIC PLUS", pixPrice: "R$ 299", creditPrice: "R$ 339" },
+            { category: "Preenchedores", name: "YVOIRE CONTOUR", pixPrice: "R$ 325", creditPrice: "R$ 335" },
+            { category: "Preenchedores", name: "YVOIRE VOLUME PLUS", pixPrice: "R$ 309", creditPrice: "R$ 329" },
+            
+            // FIOS BIO ESTIMULAÇÃO
+            { category: "Fios Bio Estimulação", name: "APRIL BRIDE 18GX100MMX160MM ESPICULADO PACK 4 FIOS", pixPrice: "R$ 380", creditPrice: "R$ 396" },
+            { category: "Fios Bio Estimulação", name: "APRIL BRIDE 19GX100MMX160MM ESPICULADO PACK 4 FIOS", pixPrice: "R$ 380", creditPrice: "R$ 396" },
+            { category: "Fios Bio Estimulação", name: "APRIL BRIDE 29GX40MMX50MM PACK 10 UN", pixPrice: "R$ 165", creditPrice: "R$ 180" },
+            { category: "Fios Bio Estimulação", name: "APRIL BRIDE FILLER 21GX38MMX50MM PACK 4 FIOS", pixPrice: "R$ 360", creditPrice: "R$ 375" },
+            { category: "Fios Bio Estimulação", name: "APRIL BRIDE FILLER 21GX60MMX80MM PACK 4 FIOX", pixPrice: "R$ 360", creditPrice: "R$ 375" },
+            { category: "Fios Bio Estimulação", name: "BIOFILS LISO AGULHADO 30GX25MMX30MM PACK 10 UN", pixPrice: "R$ 240", creditPrice: "R$ 260" },
+            { category: "Fios Bio Estimulação", name: "BIOFILS 19GX100MMX170MM ESPICULADO PACK 4UN", pixPrice: "R$ 360", creditPrice: "R$ 375" },
+            { category: "Fios Bio Estimulação", name: "BIOFILS 23GX38MMX50MM FILLER PACK 4UN", pixPrice: "R$ 360", creditPrice: "R$ 375" },
+            { category: "Fios Bio Estimulação", name: "ITHREAD 21GX38MMX50MM FILLER PACK 20UN", pixPrice: "R$ 1.838", creditPrice: "R$ 1.969" },
+            { category: "Fios Bio Estimulação", name: "ITHREAD 21GX60MMX90MM FILLER PACK 20UN", pixPrice: "R$ 1.838", creditPrice: "R$ 1.969" },
+            { category: "Fios Bio Estimulação", name: "ITHREAD 29GX38MM AGULHADO PACK 20UN", pixPrice: "R$ 499", creditPrice: "R$ 525" },
+            { category: "Fios Bio Estimulação", name: "ITHREAD 30GX25MM AGULHADO PACK 20UN", pixPrice: "R$ 499", creditPrice: "R$ 525" },
+            { category: "Fios Bio Estimulação", name: "ITHREAD ESPICULADO 19GX100X160MM PACK 20UN", pixPrice: "R$ 1.820", creditPrice: "R$ 1.899" },
+
+            // MICRO CÂNULAS
+            { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (22GX50MM)", pixPrice: "R$ 15", creditPrice: "R$ 17" },
+            { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (25GX50MM)", pixPrice: "R$ 15", creditPrice: "R$ 17" },
+            { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (22GX70MM)", pixPrice: "R$ 15", creditPrice: "R$ 17" },
+            { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (18GX100MM)", pixPrice: "R$ 18", creditPrice: "R$ 20" },
+            { category: "Micro Cânulas", name: "MICROCÂNULA PRO DEEP (18GX70MM)", pixPrice: "R$ 18", creditPrice: "R$ 20" },
+
+            // ENZIMAS
+            { category: "Enzimas", name: "HILAURONIDASE 3 VIALS 2.000 UTR", pixPrice: "R$ 170", creditPrice: "R$ 180" }
+        ];
+
+        // Function to get the correct icon/emoji for each category
+        function getCategoryIcon(category) {
+            switch (category) {
+                case "Toxina Botulínica":
+                case "Preenchedores":
+                    return '💉';
+                case "Bioestimuladores":
+                    return '💎';
+                case "Bioremodeladores":
+                    return '💧';
+                case "Skinboosters":
+                    return '✨';
+                case "Fios Bio Estimulação":
+                    return '🧵';
+                case "Micro Cânulas":
+                    return '🔬';
+                case "Enzimas":
+                    return '🧪';
+                default:
+                    return '';
+            }
+        }
+
+        // DOM elements
+        const tableBody = document.getElementById('products-table-body');
+        const cardContainer = document.getElementById('products-card-container');
+        const searchInput = document.getElementById('search-input');
+        const noResultsMessage = document.getElementById('no-results');
+
+        // Function to group products by category
+        function groupProductsByCategory(productsArray) {
+            const grouped = {};
+            productsArray.forEach(product => {
+                if (!grouped[product.category]) {
+                    grouped[product.category] = [];
+                }
+                grouped[product.category].push(product);
+            });
+            return grouped;
+        }
+
+        // Function to render both the table (desktop) and cards (mobile)
+        function renderContent(productsToRender) {
+            tableBody.innerHTML = '';
+            cardContainer.innerHTML = '';
+            
+            if (productsToRender.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+                return;
+            }
+            noResultsMessage.classList.add('hidden');
+            
+            const groupedProducts = groupProductsByCategory(productsToRender);
+
+            for (const category in groupedProducts) {
+                // Render for Desktop Table (single category header)
+                const categoryRow = document.createElement('tr');
+                categoryRow.innerHTML = `
+                    <td colspan="4" class="px-3 py-2 bg-orange-100 text-orange-600 font-bold text-sm uppercase">
+                        ${category}
+                    </td>
+                `;
+                tableBody.appendChild(categoryRow);
+
+                // Render for Mobile Cards (category section)
+                const categorySection = document.createElement('div');
+                categorySection.classList.add('category-section', 'space-y-3', 'mb-6');
+                categorySection.innerHTML = `
+                    <h2 class="text-xl font-bold text-orange-vytalle uppercase flex items-center">
+                        <span class="text-2xl mr-2">${getCategoryIcon(category)}</span>
+                        ${category}
+                    </h2>
+                    <div class="space-y-3"></div> <!-- Container for products in this category -->
+                `;
+                const productCardsContainer = categorySection.querySelector('div');
+                cardContainer.appendChild(categorySection);
+
+                groupedProducts[category].forEach(product => {
+                    const parsePrice = (priceString) => parseFloat(priceString.replace('R$', '').replace('.', '').replace(',', '.'));
+                    
+                    const pixValue = parsePrice(product.pixPrice);
+                    const creditValue = parsePrice(product.creditPrice);
+                    
+                    let discount = 0;
+                    if (creditValue > 0 && pixValue < creditValue) {
+                        discount = (((creditValue - pixValue) / creditValue) * 100).toFixed(0);
+                    }
+
+                    // Create the Desktop Table Row
+                    const row = document.createElement('tr');
+                    row.classList.add('bg-white', 'hover:bg-gray-50', 'transition-colors', 'sm:hover:bg-orange-50');
+                    row.innerHTML = `
+                        <td class="px-3 py-2 text-sm text-gray-900">
+                            <span class="text-2xl text-orange-vytalle">${getCategoryIcon(product.category)}</span>
+                        </td>
+                        <td class="px-3 py-2 text-sm text-gray-900 font-medium">
+                            ${product.name}
+                        </td>
+                        <td class="px-3 py-2 text-sm text-gray-700 whitespace-nowrap font-bold gold-vytalle">
+                            <span class="text-lg">${product.pixPrice}</span>
+                            ${discount > 0 ? `<span class="inline-block bg-orange-500 text-white text-xs font-bold px-2 py-1 ml-2 rounded-full">
+                                ${discount}% OFF
+                            </span>` : ''}
+                        </td>
+                        <td class="px-3 py-2 text-sm text-gray-700 whitespace-nowrap font-bold">
+                            ${product.creditPrice}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+
+                    // Create the Mobile Card
+                    const card = document.createElement('div');
+                    card.classList.add('bg-white', 'rounded-lg', 'shadow-sm', 'p-4', 'border', 'border-gray-200');
+                    card.innerHTML = `
+                        <p class="font-bold text-lg text-gray-900 mb-2">${product.name}</p>
+                        <div class="flex flex-col space-y-1">
+                            <div class="flex items-center text-sm font-bold gold-vytalle">
+                                <span class="text-lg mr-2">${product.pixPrice}</span>
+                                ${discount > 0 ? `<span class="inline-block bg-orange-500 text-white text-xs font-bold px-2 py-1 ml-2 rounded-full">
+                                    ${discount}% OFF
+                                </span>` : ''}
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                Crédito em até 4x (sem juros): ${product.creditPrice}
+                            </div>
+                        </div>
+                    `;
+                    productCardsContainer.appendChild(card);
+                });
+            }
+        }
+
+        function filterContent() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.category.toLowerCase().includes(searchTerm)
+            );
+            renderContent(filteredProducts);
+        }
+
+        searchInput.addEventListener('input', filterContent);
+        renderContent(products);
+    </script>
+</body>
+</html>
